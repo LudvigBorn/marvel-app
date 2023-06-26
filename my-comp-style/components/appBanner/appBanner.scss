@@ -1,0 +1,22 @@
+@import '../../styles/variables';
+.app {
+  &__banner {
+      height: 100px;
+      width: 100%;
+      background-color: $dark;
+      padding: 0 25px 0 45px;
+      display: grid;
+      grid-template-columns: 152px auto 133px;
+
+      &-text {
+        font-weight: 700;
+        font-size: 24px;
+        line-height: 28px;
+        color: #FFFFFF;
+
+        padding-left: 83px;
+        padding-top: 18px;
+      }
+
+    }
+}
