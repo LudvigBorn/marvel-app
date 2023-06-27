@@ -1,5 +1,5 @@
 import './charList.scss';
-import { useState,useEffect,useRef } from 'react';
+import { useState,useEffect,useRef,useMemo } from 'react';
 import useMarvelService from '../../services/MarvelService';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Spinner from '../spinner/Spinner';
@@ -102,6 +102,7 @@ const  CharList = (props) => {
   }
 
   function renderItems(arr) {
+    console.log('render')
     const items = arr.map((item,i) => {
       let imgStyle ={'objectFit': 'cover'};
       if (item.thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg'){
@@ -148,11 +149,14 @@ const  CharList = (props) => {
   // const spinner = loading && !newItemLoading ? <Spinner/> : null
 
 
-
+  const elements = useMemo(()=> {
+    return setContent(process, () => renderItems(charList), newItemLoading);
+  },[process])
   return (
     <div className="char__list">
-      {setContent(process, () => renderItems(charList),newItemLoading)}
+      {elements}
       <button
+
         className="button button__main button__long"
         onClick={() => onReqest(offset)}
         disabled={newItemLoading}

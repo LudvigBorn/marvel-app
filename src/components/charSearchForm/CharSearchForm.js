@@ -59,7 +59,7 @@ const CharSearchForm = () => {
 
   const onCharLoaded = (char) => {
     setChar(char);
-    console.log(char)
+
     char.length > 0 ? setProcess("confirmed") : setProcess("not_found");
   };
 
@@ -85,7 +85,7 @@ const CharSearchForm = () => {
   // ) : (
 
   // );
-  console.log(process);
+
 
   return (
     <div className="char__search-form">
