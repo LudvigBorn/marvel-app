@@ -5,13 +5,28 @@ import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import {Link} from 'react-router-dom'
 
+const setContent = (process, Component, newItemLoading) => {
+  switch (process) {
+    case "waiting":
+      return <Spinner />;
+    case "loading":
+      return newItemLoading ? <Component /> : <Spinner />;
+    case "confirmed":
+      return <Component />;
+    case "error":
+      return <ErrorMessage />;
+    default:
+      throw new Error("Unexpected process state");
+  }
+};
+
 const ComicsList = () => {
     const [comicList,setComicList] = useState([]);
     const [newItemLoading,setNewItemLoading] = useState(false);
     const [comicEnded,setComicEnded] = useState(false);
     const [offset,setOffset] = useState(10);
 
-    const {error,loading,getAllComics} = useMarvelService();
+    const {process,setProcess, error,loading,getAllComics} = useMarvelService();
 
     useEffect(()=> {
         onRequest(offset,true);
@@ -21,6 +36,7 @@ const ComicsList = () => {
         setNewItemLoading(!initial)
         getAllComics(offset)
         .then(onComicsListLoaded)
+        .then(() => setProcess('confirmed'))
     }
 
 
@@ -70,65 +86,16 @@ const ComicsList = () => {
     }
 
 
-    const items = renderItems(comicList);
-    const spiner = loading && !newItemLoading ? <Spinner/> : null
-    const errorMessage = error ? <ErrorMessage/> : null
+    //const items = renderItems(comicList);
+    // const spiner = loading && !newItemLoading ? <Spinner/> : null
+    // const errorMessage = error ? <ErrorMessage/> : null
 
     return (
       <div className="comics__list">
-        {errorMessage}
+        {/* {errorMessage}
         {spiner}
-        {items}
-
-        {/* <li className="comics__item">
-                    <a href="#">
-                        <img src={xMen} alt="x-men" className="comics__item-img"/>
-                        <div className="comics__item-name">X-Men: Days of Future Past</div>
-                        <div className="comics__item-price">NOT AVAILABLE</div>
-                    </a>
-                </li>
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={uw} alt="ultimate war" className="comics__item-img"/>
-                        <div className="comics__item-name">ULTIMATE X-MEN VOL. 5: ULTIMATE WAR TPB</div>
-                        <div className="comics__item-price">9.99$</div>
-                    </a>
-                </li>
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={xMen} alt="x-men" className="comics__item-img"/>
-                        <div className="comics__item-name">X-Men: Days of Future Past</div>
-                        <div className="comics__item-price">NOT AVAILABLE</div>
-                    </a>
-                </li>
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={uw} alt="ultimate war" className="comics__item-img"/>
-                        <div className="comics__item-name">ULTIMATE X-MEN VOL. 5: ULTIMATE WAR TPB</div>
-                        <div className="comics__item-price">9.99$</div>
-                    </a>
-                </li>
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={xMen} alt="x-men" className="comics__item-img"/>
-                        <div className="comics__item-name">X-Men: Days of Future Past</div>
-                        <div className="comics__item-price">NOT AVAILABLE</div>
-                    </a>
-                </li>
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={uw} alt="ultimate war" className="comics__item-img"/>
-                        <div className="comics__item-name">ULTIMATE X-MEN VOL. 5: ULTIMATE WAR TPB</div>
-                        <div className="comics__item-price">9.99$</div>
-                    </a>
-                </li>
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={xMen} alt="x-men" className="comics__item-img"/>
-                        <div className="comics__item-name">X-Men: Days of Future Past</div>
-                        <div className="comics__item-price">NOT AVAILABLE</div>
-                    </a>
-                </li> */}
+        {items} */}
+        {setContent(process,()=>renderItems(comicList),newItemLoading)}
 
         <button
           onClick={() => onRequest(offset)}

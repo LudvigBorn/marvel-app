@@ -5,7 +5,22 @@ import ErrorMessage from '../errorMessage/ErrorMessage';
 import Spinner from '../spinner/Spinner';
 import PropTypes from "prop-types";
 import {TransitionGroup,CSSTransition} from 'react-transition-group'
+//import setContent from '../../utils/setContent';
 
+const setContent = (process, Component, newItemLoading) => {
+  switch (process) {
+    case "waiting":
+      return <Spinner />;
+    case "loading":
+      return newItemLoading ? <Component/>  :<Spinner />;
+    case "confirmed":
+      return <Component />;
+    case "error":
+      return <ErrorMessage />;
+    default:
+      throw new Error("Unexpected process state");
+  }
+};
 
 const  CharList = (props) => {
   const [charList,setCharList] = useState([]);
@@ -14,7 +29,7 @@ const  CharList = (props) => {
   const [charEnded,setCharEnded] = useState(false);
 
 
-  const {loading,error,getAllCharacters} = useMarvelService();
+  const {loading,error,process,setProcess,getAllCharacters} = useMarvelService();
 
   useEffect(() => {
     onReqest(offset,true);
@@ -24,6 +39,7 @@ const  CharList = (props) => {
     setNewItemLoading(!initial);
     getAllCharacters(offset)
       .then(onCharListLoaded)
+      .then(()=>setProcess('confirmed'))
   }
 
   // componentDidMount() {
@@ -126,24 +142,22 @@ const  CharList = (props) => {
     );
 
   }
-  const items = renderItems(charList)
+  //const items = renderItems(charList)
 
-  const errorMessage = error ? <ErrorMessage/> : null
-  const spinner = loading && !newItemLoading ? <Spinner/> : null
+  // const errorMessage = error ? <ErrorMessage/> : null
+  // const spinner = loading && !newItemLoading ? <Spinner/> : null
 
 
 
   return (
     <div className="char__list">
-      {errorMessage}
-      {spinner}
-      {items}
+      {setContent(process, () => renderItems(charList),newItemLoading)}
       <button
         className="button button__main button__long"
         onClick={() => onReqest(offset)}
-        disabled = {newItemLoading}
-        style = {{'display': charEnded ?  'none' : 'block'}}
-        >
+        disabled={newItemLoading}
+        style={{ display: charEnded ? "none" : "block" }}
+      >
         <div className="inner">load more</div>
       </button>
     </div>
